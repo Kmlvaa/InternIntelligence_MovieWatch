@@ -1,5 +1,6 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
+import Search from '../_components/Search'
 
 export default function Header() {
     return (
@@ -8,9 +9,7 @@ export default function Header() {
                 <div className='w-1/4'>
                     <Link to='/' className='border-0'><p className='text-white font-bold text-2xl cursor-pointer'>MovieWatch</p></Link>
                 </div>
-                <div className='w-1/2'>
-                    <input placeholder='Search movie...' className='py-2 px-5 rounded-full w-full' />
-                </div>
+                <Search />
                 <div className='w-1/4 flex flex-row gap-3 justify-end'>
                     <button className='bg-buttonColor py-2 px-3 rounded-md text-white hover:bg-[#2a2e3c]'>Login</button>
                     <button className='bg-buttonColor py-2 px-3 rounded-md text-white hover:bg-[#2a2e3c]'>Register</button>
@@ -20,8 +19,12 @@ export default function Header() {
                 <ul className='flex flex-row gap-6'>
                     <li className='cursor-pointer text-gray-600 hover:text-white'>About</li>
                     <li className='cursor-pointer text-gray-600 hover:text-white'>Contact</li>
-                    <li className='cursor-pointer text-gray-600 hover:text-white'>Movies</li>
-                    <li className='cursor-pointer text-gray-600 hover:text-white'>Series</li>
+                    <li className='cursor-pointer text-gray-600 hover:text-white'>
+                        <Link to='/movies/all'>Movies</Link>
+                    </li>
+                    <li className='cursor-pointer text-gray-600 hover:text-white'>
+                        <Link to='/series/all'>Series</Link>
+                    </li>
                 </ul>
             </div>
         </div>

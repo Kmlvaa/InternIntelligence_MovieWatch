@@ -30,38 +30,39 @@ export default function TVshowsDetails() {
             <div className='flex flex-col gap-2'>
                 <h1 className="text-3xl font-bold">{movie.title}</h1>
                 <p>{movie.overview}</p>
-                <p className='flex flex-row gap-2 text-sm'>
+                <p className='text-yellow-700'>{movie.tagline}</p>
+                <div className='flex flex-row gap-2 text-sm'>
                     <span className='text-gray-500 flex flex-row gap-1 items-center'>
                         <FaImdb />
                         <p>IMDB point:</p>
                     </span>
                     <p>{(movie?.popularity)?.toFixed(1)} / 10</p>
-                </p>
-                <p className='flex flex-row gap-2 text-sm'>
+                </div>
+                <div className='flex flex-row gap-2 text-sm'>
                     <span className='text-gray-500 flex flex-row gap-1 items-center'>
                         <FaRegCalendar />
                         <p>Release date:</p>
                     </span>
                     <p>{movie.release_date}</p>
-                </p>
-                <p className='flex flex-row gap-2 text-sm'>
+                </div>
+                <div className='flex flex-row gap-2 text-sm'>
                     <span className='text-gray-500 flex flex-row gap-1 items-center'>
                         <IoLanguage />
                         <p>Original_language:</p>
                     </span>
                     <p>{movie.original_language}</p>
-                </p>
-                <p className='flex flex-row gap-2 text-sm'>
+                </div>
+                <div className='flex flex-row gap-2 text-sm'>
                     <span className='text-gray-500 flex flex-row gap-1 items-center'>
                         <IoMdList />
                         <p>Genres:</p>
                     </span>
                     <ul className='flex flex-row gap-2'>
                         {movie.genres?.map((genre) => (
-                            <li>{genre.name}, </li>
+                            <li key={genre.id}>{genre.name || genre.title}, </li>
                         ))}
                     </ul>
-                </p>
+                </div>
             </div>
         </div>
     )

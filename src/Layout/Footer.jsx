@@ -3,28 +3,41 @@ import { FaFacebookF } from "react-icons/fa6";
 import { GrInstagram } from "react-icons/gr";
 import { FaTwitter } from "react-icons/fa";
 import { BiLogoTelegram } from "react-icons/bi";
+import axios from 'axios';
 
 const apiKey = process.env.REACT_APP_API_KEY;
 const apiUrl = process.env.REACT_APP_BASE_URL;
 
 export default function Footer() {
 
-    const [movieGenre, setMovieGenre] = useState([]);
-    console.log(apiKey)
+    const [movieGenres, setMovieGenres] = useState([]);
+    const [TVGenres, setTVGenres] = useState([]);
 
     useEffect(() => {
-        fetch(`${apiUrl}/genre/movie/list?language=en?api_key=${apiKey}`)
-            .then((res) => res.json())
-            .then((data) => {
-                setMovieGenre(data.results)
-                console.log('yes')
-            })
-            .catch((err) => console.log(err))
+        const fetchGenres = async () => {
+            try {
+              // Fetch movie genres
+              const movieResponse = await axios.get(
+                `https://api.themoviedb.org/3/genre/movie/list?api_key=${apiKey}&language=en-US`
+              );
+              setMovieGenres(movieResponse.data.genres);
+      
+              // Fetch TV genres
+              const tvResponse = await axios.get(
+                `https://api.themoviedb.org/3/genre/tv/list?api_key=${apiKey}&language=en-US`
+              );
+              setTVGenres(tvResponse.data.genres);
+            } catch (err) {
+              console.error('Error fetching genres:', err);
+            }
+          };
+      
+          fetchGenres();
     }, [])
 
     return (
         <div className='w-full h-full border-t border-gray-800 px-8 my-10 py-5'>
-            <div className='flex flex-row items-center justify-between mb-6'>
+            <div className='flex flex-row items-center justify-between my-10'>
                 <div className='w-1/4'>
                     <p className='text-white font-bold text-2xl cursor-pointer'>MovieWatch</p>
                 </div>
@@ -61,33 +74,40 @@ export default function Footer() {
             </div>
             <div className='flex flex-row items-center justify-between mb-6'>
                 <div>
-                    <p className='text-white font-semibold text-lg mb-3'>Popular types</p>
+                    <p className='text-white font-semibold text-lg mb-3'>Popular movie genres</p>
                     <div className='flex flex-row gap-10 text-gray-600'>
                         <ul>
-                            {movieGenre?.map((genre) => {
+                            {movieGenres?.map((genre) => {
                                 return (
                                     <li key={genre.id} className='hover:text-white cursor-pointer'>{genre.name}</li>
                                 );
-                            }).slice(0, 8)}
+                            }).slice(0, 6)}
+                        </ul>
+                        <ul>
+                            {movieGenres?.map((genre) => {
+                                return (
+                                    <li key={genre.id} className='hover:text-white cursor-pointer'>{genre.name}</li>
+                                );
+                            }).slice(6, 12)}
                         </ul>
                     </div>
                 </div>
                 <div>
-                    <p className='text-white font-semibold text-lg mb-3'>Featured movies and series</p>
+                    <p className='text-white font-semibold text-lg mb-3'>Popular TV shows genres</p>
                     <div className='flex flex-row gap-10 text-gray-600'>
                         <ul>
-                            <li className='hover:text-white cursor-pointer'>Love films</li>
-                            <li className='hover:text-white cursor-pointer'>Horror movies</li>
-                            <li className='hover:text-white cursor-pointer'>Action movies</li>
-                            <li className='hover:text-white cursor-pointer'>Comedy movies</li>
-                            <li className='hover:text-white cursor-pointer'>Animated movies</li>
+                            {TVGenres?.map((genre) => {
+                                return (
+                                    <li key={genre.id} className='hover:text-white cursor-pointer'>{genre.name}</li>
+                                );
+                            }).slice(0, 6)}
                         </ul>
                         <ul>
-                            <li className='hover:text-white cursor-pointer'>Love series</li>
-                            <li className='hover:text-white cursor-pointer'>Horror series</li>
-                            <li className='hover:text-white cursor-pointer'>Action series</li>
-                            <li className='hover:text-white cursor-pointer'>Comedy series</li>
-                            <li className='hover:text-white cursor-pointer'>Animated series</li>
+                            {TVGenres?.map((genre) => {
+                                return (
+                                    <li key={genre.id} className='hover:text-white cursor-pointer'>{genre.name}</li>
+                                );
+                            }).slice(6, 12)}
                         </ul>
                     </div>
                 </div>

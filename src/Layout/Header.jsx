@@ -17,8 +17,12 @@ export default function Header() {
             </div>
             <div className='flex justify-end px-8 py-2 bg-zinc-800'>
                 <ul className='flex flex-row gap-6'>
-                    <li className='cursor-pointer text-gray-600 hover:text-white'>About</li>
-                    <li className='cursor-pointer text-gray-600 hover:text-white'>Contact</li>
+                    <li className='cursor-pointer text-gray-600 hover:text-white'>
+                        <Link to='/about'>About</Link>
+                    </li>
+                    <li className='cursor-pointer text-gray-600 hover:text-white'>
+                        <Link to='/contact'>Contact</Link>
+                    </li>
                     <li className='cursor-pointer text-gray-600 hover:text-white'>
                         <Link to='/movies/all'>Movies</Link>
                     </li>

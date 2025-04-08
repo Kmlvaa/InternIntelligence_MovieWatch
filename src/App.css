@@ -1,3 +1,10 @@
 body{
-  background-color: #111216;
+  background: linear-gradient(
+  to right,
+  #27272a,   /* zinc-800 */
+  #404040,   /* neutral-700 */
+  #262626,   /* neutral-800 */
+  #09090b    /* zinc-950 */
+);
+overscroll-behavior: none;
 }

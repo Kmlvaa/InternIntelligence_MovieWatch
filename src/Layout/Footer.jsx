@@ -1,12 +1,29 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { FaFacebookF } from "react-icons/fa6";
 import { GrInstagram } from "react-icons/gr";
 import { FaTwitter } from "react-icons/fa";
 import { BiLogoTelegram } from "react-icons/bi";
 
+const apiKey = process.env.REACT_APP_API_KEY;
+const apiUrl = process.env.REACT_APP_BASE_URL;
+
 export default function Footer() {
+
+    const [movieGenre, setMovieGenre] = useState([]);
+    console.log(apiKey)
+
+    useEffect(() => {
+        fetch(`${apiUrl}/genre/movie/list?language=en?api_key=${apiKey}`)
+            .then((res) => res.json())
+            .then((data) => {
+                setMovieGenre(data.results)
+                console.log('yes')
+            })
+            .catch((err) => console.log(err))
+    }, [])
+
     return (
-        <div className='w-full h-full border-t border-gray-800 px-8 py-5'>
+        <div className='w-full h-full border-t border-gray-800 px-8 my-10 py-5'>
             <div className='flex flex-row items-center justify-between mb-6'>
                 <div className='w-1/4'>
                     <p className='text-white font-bold text-2xl cursor-pointer'>MovieWatch</p>
@@ -47,18 +64,11 @@ export default function Footer() {
                     <p className='text-white font-semibold text-lg mb-3'>Popular types</p>
                     <div className='flex flex-row gap-10 text-gray-600'>
                         <ul>
-                            <li className='hover:text-white cursor-pointer'>Love films</li>
-                            <li className='hover:text-white cursor-pointer'>Horror movies</li>
-                            <li className='hover:text-white cursor-pointer'>Action movies</li>
-                            <li className='hover:text-white cursor-pointer'>Comedy movies</li>
-                            <li className='hover:text-white cursor-pointer'>Animated movies</li>
-                        </ul>
-                        <ul>
-                            <li className='hover:text-white cursor-pointer'>Love series</li>
-                            <li className='hover:text-white cursor-pointer'>Horror series</li>
-                            <li className='hover:text-white cursor-pointer'>Action series</li>
-                            <li className='hover:text-white cursor-pointer'>Comedy series</li>
-                            <li className='hover:text-white cursor-pointer'>Animated series</li>
+                            {movieGenre?.map((genre) => {
+                                return (
+                                    <li key={genre.id} className='hover:text-white cursor-pointer'>{genre.name}</li>
+                                );
+                            }).slice(0, 8)}
                         </ul>
                     </div>
                 </div>

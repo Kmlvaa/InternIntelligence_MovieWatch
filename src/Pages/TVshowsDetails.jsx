@@ -22,7 +22,7 @@ export default function TVshowsDetails() {
             .catch(err => console.log(err));
     }, [id]);
 
-    if (!movie) return <p>Loading...</p>;
+    if (!movie) return <p className='text-white font-semibold'>Loading...</p>;
 
     return (
         <div className="text-white p-4 flex flex-row gap-5">

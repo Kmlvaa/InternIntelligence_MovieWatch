@@ -1,54 +1,164 @@
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useEffect, useState } from 'react';
+import axios from 'axios';
 import { FaFire } from "react-icons/fa6";
 import { FaPlus } from "react-icons/fa6";
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Grid, Navigation } from 'swiper/modules';
 import 'swiper/css';
 import 'swiper/css/navigation';
-import { useNavigate } from 'react-router-dom';
 
 const apiKey = process.env.REACT_APP_API_KEY;
 const apiUrl = process.env.REACT_APP_BASE_URL;
 
 export default function Movies() {
 
-    const [Trendmovies, setTrendMovies] = useState([]);
-    const [TopMovies, setTopMovies] = useState([]);
-    const [UpcomingMovies, setUpcomingMovies] = useState([]);
+    const [searchParams, setSearchParams] = useSearchParams();
+
+    const [trendMovies, setTrendMovies] = useState([]);
+    const [filteredTrendMovies, setFilteredTrendMovies] = useState([]);
+
+    const [topMovies, setTopMovies] = useState([]);
+    const [filteredTopMovies, setFilteredTopMovies] = useState([]);
+
+    const [upcomingMovies, setUpcomingMovies] = useState([]);
+    const [filteredUpcomingMovies, setFilteredUpcomingMovies] = useState([]);
+
+    const [selectedGenre, setSelectedGenre] = useState(searchParams.get('genre') || '');
+    const [minRating, setMinRating] = useState(Number(searchParams.get('rating')) || 0);
+    const [releaseYear, setReleaseYear] = useState(searchParams.get('year') || '');
+
+    const [movieGenres, setMovieGenres] = useState([]);
+
     const [gridCount, setGridCount] = useState(4);
+
+    useEffect(() => {
+        const fetchGenres = async () => {
+            try {
+                const res = await axios.get(`${apiUrl}/genre/movie/list?api_key=${apiKey}&language=en-US`);
+                setMovieGenres(res.data.genres);
+            } catch (err) {
+                console.error('Error fetching genres:', err);
+            }
+        };
+        fetchGenres();
+    }, []);
+
+    useEffect(() => {
+        const fetchMovies = async () => {
+            try {
+                const res1 = await axios.get(`${apiUrl}/trending/movie/week?api_key=${apiKey}`);
+                setTrendMovies(res1.data.results);
+
+                const res2 = await axios.get(`${apiUrl}/movie/top_rated?api_key=${apiKey}`);
+                setTopMovies(res2.data.results);
+
+                const res3 = await axios.get(`${apiUrl}/movie/upcoming?api_key=${apiKey}`);
+                setUpcomingMovies(res3.data.results);
+
+            } catch (err) {
+                console.error('Error fetching movies:', err);
+            }
+        };
+        fetchMovies();
+    }, []);
+
+    useEffect(() => {
+        const filtered1 = trendMovies.filter(movie => {
+            const matchedGenre = selectedGenre ? movie.genre_ids?.includes(parseInt(selectedGenre)) : true;
+            const matchedRating = movie.vote_average >= minRating;
+            const matchedYear = releaseYear ? movie.release_date?.startsWith(releaseYear) : true;
+
+            return matchedGenre && matchedRating && matchedYear;
+        });
+
+        const filtered2 = topMovies.filter(movie => {
+            const matchedGenre = selectedGenre ? movie.genre_ids?.includes(parseInt(selectedGenre)) : true;
+            const matchedRating = movie.vote_average >= minRating;
+            const matchedYear = releaseYear ? movie.release_date?.startsWith(releaseYear) : true;
+
+            return matchedGenre && matchedRating && matchedYear;
+        });
+
+        const filtered3 = upcomingMovies.filter(movie => {
+            const matchedGenre = selectedGenre ? movie.genre_ids?.includes(parseInt(selectedGenre)) : true;
+            const matchedRating = movie.vote_average >= minRating;
+            const matchedYear = releaseYear ? movie.release_date?.startsWith(releaseYear) : true;
+
+            return matchedGenre && matchedRating && matchedYear;
+        });
+
+        setFilteredTrendMovies(filtered1);
+        setFilteredTopMovies(filtered2);
+        setFilteredUpcomingMovies(filtered3);
+
+        // Update URL
+        const params = {};
+        if (selectedGenre) params.genre = selectedGenre;
+        if (minRating) params.rating = minRating;
+        if (releaseYear) params.year = releaseYear;
+        setSearchParams(params);
+
+    }, [selectedGenre, minRating, releaseYear, trendMovies, topMovies, upcomingMovies]);
+
+    // Reset filters
+    const handleReset = () => {
+        setSelectedGenre('');
+        setMinRating(0);
+        setReleaseYear('');
+        setSearchParams({});
+    };
+
+    const handleMore = () => {
+        setGridCount((prev) => prev + 1);
+    }
+
     const navigate = useNavigate();
 
     const handleNavigate = (id) => {
         navigate(`/movie/${id}`);
     };
 
-    useEffect(() => {
-        fetch(`${apiUrl}/movie/top_rated?api_key=${apiKey}`)
-            .then((res) => res.json())
-            .then((data) => setTrendMovies(data.results))
-            .catch((err) => console.log(err))
-    }, []);
-    useEffect(() => {
-        fetch(`${apiUrl}/trending/movie/week?api_key=${apiKey}`)
-            .then((res) => res.json())
-            .then((data) => setTopMovies(data.results))
-            .catch((err) => console.log(err))
-    }, []);
-    useEffect(() => {
-        fetch(`${apiUrl}/movie/upcoming?api_key=${apiKey}`)
-            .then((res) => res.json())
-            .then((data) => setUpcomingMovies(data.results))
-            .catch((err) => console.log(err))
-    }, [])
-
-    const swiperRef = useRef(null);
-
-    const handleMore = () => {
-        setGridCount((prev) => prev + 1);
-    }
-
     return (
-        <div className='mb-8'>
+        <div>
+            <div className="flex flex-col gap-4 md:flex-row md:items-center mb-5">
+                <select
+                    className="p-2 bg-[#2a2e3c] text-white rounded"
+                    value={selectedGenre}
+                    onChange={(e) => setSelectedGenre(e.target.value)}
+                >
+                    <option value="">All Genres</option>
+                    {movieGenres.map((genre) => (
+                        <option key={genre.id} value={genre.id}>{genre.name}</option>
+                    ))}
+                </select>
+
+                <input
+                    type="number"
+                    min="0"
+                    max="10"
+                    step="0.1"
+                    placeholder="Minimum IMDb rating"
+                    className="p-2 bg-[#2a2e3c] text-white rounded"
+                    value={minRating}
+                    onChange={(e) => setMinRating(Number(e.target.value))}
+                />
+
+                <input
+                    type="text"
+                    placeholder="Year (e.g. 2020)"
+                    className="p-2 bg-[#2a2e3c] text-white rounded"
+                    value={releaseYear}
+                    onChange={(e) => setReleaseYear(e.target.value)}
+                />
+                <button
+                    onClick={handleReset}
+                    className="p-2 px-4 bg-red-600 hover:bg-red-500 text-white rounded"
+                >
+                    Reset
+                </button>
+            </div>
+
             <div className='border-b border-gray-800 mb-8 flex flex-row items-center justify-between'>
                 <div className='text-white text-lg border-b border-white w-40 flex flex-row items-center gap-2'>
                     <FaFire />
@@ -57,27 +167,23 @@ export default function Movies() {
             </div>
             <Swiper
                 spaceBetween={10}
-                slidesPerView={7}
+                slidesPerView={5}
                 modules={[Navigation, Grid]}
                 grid={{
                     rows: gridCount,
                     fill: 'row',
                 }}
             >
-                {[...Trendmovies, ...TopMovies, ...UpcomingMovies]?.map((movie) => {
+                {[...filteredTopMovies, ...filteredTrendMovies, ...filteredUpcomingMovies]?.map((movie) => {
                     return (
                         <SwiperSlide onClick={() => handleNavigate(movie.id)}
-                            key={movie.id} className='w-40 h-72 text-white rounded-lg relative cursor-pointer overflow-hidden'>
-                            <img
-                                src={`https://image.tmdb.org/t/p/w500${movie.poster_path}`}
-                                alt={movie.title}
-                                className="w-full h-72 object-cover rounded-lg transition-transform duration-500 ease-in-out transform hover:scale-125"
-                            />
-                            <div className="absolute top-0 left-0 px-2">
-                                <h2 className="text-lg font-semibold truncate">{movie.title}</h2>
-                                <p className="text-white text-xs">
-                                    ⭐ {(movie.vote_average).toFixed(1)}/10 | {movie.release_date}
-                                </p>
+                            key={movie.id} className="bg-[#2a2e3c] text-white rounded-lg cursor-pointer h-80 transition-transform duration-500 ease-in-out transform hover:bg-[#495057]"
+                        >
+                            <img src={`https://image.tmdb.org/t/p/w500${movie.poster_path}`} alt={movie.title} className='object-cover h-72 w-full rounded-lg' />
+                            <div className="p-2">
+                                <h2 className="font-semibold">{movie.title}</h2>
+                                <p>⭐ {movie.vote_average}</p>
+                                <p>📅 {movie.release_date}</p>
                             </div>
                         </SwiperSlide>
                     );
@@ -88,5 +194,5 @@ export default function Movies() {
                 </div>
             </Swiper>
         </div>
-    )
+    );
 }

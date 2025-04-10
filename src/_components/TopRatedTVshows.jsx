@@ -3,7 +3,7 @@ import { FaStar } from "react-icons/fa";
 import { SlArrowRight } from "react-icons/sl";
 import { SlArrowLeft } from "react-icons/sl";
 import { Swiper, SwiperSlide } from 'swiper/react';
-import { Navigation } from 'swiper/modules'; 
+import { Navigation } from 'swiper/modules';
 import 'swiper/css';
 import 'swiper/css/navigation';
 import { useNavigate } from 'react-router-dom';
@@ -49,7 +49,24 @@ export default function TopRatedTVshows() {
             </div>
             <Swiper
                 spaceBetween={10}
-                slidesPerView={5}
+                breakpoints={{
+                    // When screen width is >= 640px (sm)
+                    640: {
+                        slidesPerView: 4,
+                    },
+                    // When screen width is >= 768px (md)
+                    768: {
+                        slidesPerView: 4,
+                    },
+                    // When screen width is >= 1024px (lg)
+                    1024: {
+                        slidesPerView: 5,
+                    },
+                    // Default for smaller screens (<640px)
+                    0: {
+                        slidesPerView: 4,
+                    },
+                }}
                 loop={true}
                 modules={[Navigation]}
                 ref={swiperRef}
@@ -57,7 +74,7 @@ export default function TopRatedTVshows() {
                 {movies?.map((movie) => {
                     return (
                         <SwiperSlide onClick={() => handleNavigate(movie.id)}
-                        key={movie.id} className='w-60 h-36 text-white rounded-lg relative cursor-pointer overflow-hidden'>
+                            key={movie.id} className='w-60 h-36 text-white rounded-lg relative cursor-pointer overflow-hidden'>
                             <img
                                 src={`https://image.tmdb.org/t/p/w500${movie.poster_path}`}
                                 alt={movie.title}

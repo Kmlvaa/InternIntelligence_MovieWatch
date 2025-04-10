@@ -33,7 +33,7 @@ export default function Anime() {
     const swiperRef = useRef(null);
 
     const handleMore = () => {
-        setGridCount(prev => prev + 1);
+        setGridCount(prev => prev + 2);
     }
     return (
         <div className='pt-8'>
@@ -45,7 +45,20 @@ export default function Anime() {
             </div>
             <Swiper
                 spaceBetween={10}
-                slidesPerView={4}
+                breakpoints={{
+                    640: {
+                        slidesPerView: 2,
+                    },
+                    768: {
+                        slidesPerView: 3,
+                    },
+                    1024: {
+                        slidesPerView: 4,
+                    },
+                    0: {
+                        slidesPerView: 1,
+                    },
+                }}
                 modules={[Navigation, Grid]}
                 ref={swiperRef}
                 grid={{
@@ -56,7 +69,7 @@ export default function Anime() {
                 {movies?.map((movie) => {
                     return (
                         <SwiperSlide onClick={() => handleNavigate(movie.id)}
-                        key={movie.id} className='w-60 h-20 text-white rounded-md cursor-pointer overflow-hidden bg-gray-800 p-2 hover:bg-gray-700'>
+                            key={movie.id} className='w-60 h-20 text-white rounded-md cursor-pointer overflow-hidden bg-buttonColor p-2 hover:bg-buttonColorHover'>
                             <div className='flex flex-row gap-2 items-center'>
                                 <img
                                     src={`https://image.tmdb.org/t/p/w500${movie.poster_path}`}
@@ -73,8 +86,8 @@ export default function Anime() {
                         </SwiperSlide>
                     );
                 })}
-                <div className=' text-white m-auto cursor-pointer mt-5 flex flex-row gap-2 items-center justify-center bg-gray-800 p-2 hover:bg-gray-700' onClick={handleMore}>
-                    <FaPlus className='text-sm'/>
+                <div className=' text-white m-auto cursor-pointer mt-5 flex flex-row gap-2 items-center justify-center bg-buttonColor p-2 hover:bg-buttonColorHover' onClick={handleMore}>
+                    <FaPlus className='text-sm' />
                     <p>See More</p>
                 </div>
             </Swiper>

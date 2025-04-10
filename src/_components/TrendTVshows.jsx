@@ -39,7 +39,7 @@ export default function TopTVshows() {
         if (swiperRef.current && swiperRef.current.swiper) {
             swiperRef.current.swiper.slideNext();
         }
-    };      
+    };
     return (
         <div className='py-10'>
             <div className='border-b border-gray-800 mb-8 flex flex-row items-center justify-between'>
@@ -54,7 +54,24 @@ export default function TopTVshows() {
             </div>
             <Swiper
                 spaceBetween={10}
-                slidesPerView={7}
+                breakpoints={{
+                    // When screen width is >= 640px (sm)
+                    640: {
+                        slidesPerView: 4,
+                    },
+                    // When screen width is >= 768px (md)
+                    768: {
+                        slidesPerView: 4,
+                    },
+                    // When screen width is >= 1024px (lg)
+                    1024: {
+                        slidesPerView: 7,
+                    },
+                    // Default for smaller screens (<640px)
+                    0: {
+                        slidesPerView: 3,
+                    },
+                }}
                 loop={true}
                 modules={[Navigation]}
                 ref={swiperRef}
@@ -62,7 +79,7 @@ export default function TopTVshows() {
                 {movies?.map((movie) => {
                     return (
                         <SwiperSlide onClick={() => handleNavigate(movie.id)}
-                        key={movie.id} className='w-40 h-72 text-white rounded-lg relative cursor-pointer overflow-hidden'>
+                            key={movie.id} className='w-40 h-72 text-white rounded-lg relative cursor-pointer overflow-hidden'>
                             <img
                                 src={`https://image.tmdb.org/t/p/w500${movie.poster_path}`}
                                 alt={movie.title}

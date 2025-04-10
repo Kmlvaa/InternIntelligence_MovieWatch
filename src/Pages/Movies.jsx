@@ -167,7 +167,24 @@ export default function Movies() {
             </div>
             <Swiper
                 spaceBetween={10}
-                slidesPerView={5}
+                breakpoints={{
+                    // When screen width is >= 640px (sm)
+                    640: {
+                        slidesPerView: 4,
+                    },
+                    // When screen width is >= 768px (md)
+                    768: {
+                        slidesPerView: 4,
+                    },
+                    // When screen width is >= 1024px (lg)
+                    1024: {
+                        slidesPerView: 5,
+                    },
+                    // Default for smaller screens (<640px)
+                    0: {
+                        slidesPerView: 2,
+                    },
+                }}
                 modules={[Navigation, Grid]}
                 grid={{
                     rows: gridCount,
